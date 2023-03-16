@@ -1,0 +1,181 @@
+---
+title: "MSIN0094 Third Assignment"
+author: "Due 10 am, 17 Dec"
+output: 
+  pdf_document:
+    number_sections: true
+fontsize: 11pt
+geometry: margin=1.25in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo  = T)
+pacman::p_load(dplyr, knitr)
+
+```
+
+```{r}
+data_full <- read.csv("https://www.dropbox.com/s/pc690z638w828v8/amazon.csv?dl=1")
+```
+
+1.
+
+```{r}
+#a)
+
+data_full <- data_full %>%
+  mutate(monetaryvalue = rowSums(select(., contains("electronics"))),
+         frequency = rowSums(select(., c('home', 'sports', 'clothes', 'health', 'books', 'digital', 'toys'))),
+         recency = rowSums(select(., c('last'))) )
+
+#b)
+colMeans(data_full[sapply(data_full, is.numeric)])
+```
+
+
+2. 
+
+```{r}
+## please finish all 4 steps (a to d) in this single code block
+data_full <- data_full%>%
+  mutate(R_group = ntile(recency,4))%>%
+  group_by(R_group)%>%
+  mutate(F_group = ntile(-frequency,4))%>%
+  ungroup()%>%
+  group_by(R_group, F_group) %>%
+  mutate(M_group = ntile(-monetaryvalue,4))%>%
+  ungroup()%>%
+  arrange(R_group, F_group, M_group) %>%
+  mutate(is_new_group = ifelse(R_group != log(R_group) |
+                                 F_group != log(F_group) |
+                                 M_group != log(M_group), 1L, 0L)) %>%
+  mutate(is_new_group = ifelse(is.na(is_new_group),1L,is_new_group)) %>%
+  mutate(RFM_group = cumsum(is_new_group))
+```
+
+    
+3.
+
+```{r}
+#a)
+data_full <- data_full%>%
+  mutate(numeric_subscribe = ifelse(subscribe == "yes", 1, 0))
+
+data_full <- data_full%>%
+  group_by(RFM_group)%>%
+  mutate(avg_response_rate = mean(numeric_subscribe, na.rm = T))%>%
+  ungroup()
+
+#b)
+data_RFM <- data_full%>%
+  group_by(RFM_group) %>%
+  summarise(avg_response = mean(numeric_subscribe, na.rm = T))%>%
+  ungroup()
+
+ggplot(data = data_RFM) +
+  geom_bar(aes(x = RFM_group, y = avg_response), stat="identity", color = "Black", fill = "white") +
+  theme_stata() +
+  xlab("RFM Group") +
+  ylab("Average Response in Each Group")
+```
+
+
+
+4. 
+
+```{r}
+cost_per_offer <- 2
+COGS <- 0.5
+profit_per_customer <- (40-4) * (1 - COGS)
+
+breakeven_response_rate <- cost_per_offer/profit_per_customer
+
+breakeven_response_rate
+```
+
+5.
+
+```{r}
+#a)
+
+data_full <- data_full%>%
+  mutate(is_target_RFM = ifelse(avg_response_rate > breakeve_response_rate, 1L, 0L))
+```
+
+
+6. 
+```{r}
+#a)
+total_costs_of_mailing_blanket <- cost_per_offer * 10000
+total_profit_blanket <- sum(data_full$numeric_subscribe) * profit_per_customer
+ROI_blanket <- (total_profit_blanket - total_costs_of_mailing_blanket)/total_costs_of_mailing_blanket
+ROI_blanket
+```
+
+    
+7. 
+
+```{r}
+
+```
+
+
+8. 
+
+
+9. Complete the following code block to split the `data_full` into a training set that accounts for 70% of total data, and a test set that accounts for the remaining 30% of data. (Please do not modify the seed, or you will get different results) (**4pts** in total)
+
+```{r}
+
+set.seed(888)
+
+training_set_index <- sample(x = , 
+                             size = , 
+                             replace = F)
+
+data_training <- 
+data_test <- 
+
+# please check if the first observation in the data_training after this step has user_id 17649;
+```
+
+
+10. 
+
+```{r}
+
+```
+
+
+11. 
+
+```{r}
+
+```
+
+
+12. 
+
+```{r}
+
+```
+
+13. 
+
+```{r}
+
+```
+
+
+14.
+    
+
+
+15. 
+
+
+
+16. 
+
+
+17. 

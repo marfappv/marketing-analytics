@@ -1,0 +1,297 @@
+---
+title: "MSIN0096 Second Assignment"
+author: "Due 10 am, 24 Nov for SORA students"
+date: "23/11/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# Question 1 
+This question is about comparing means from paired data, 1-sided test.
+
+**Step 1: Define 2 competing hypotheses.**
+Suppose mu0 - mothers average sleeping hours per day before having a baby.
+    mu1 - mothers average sleeping hours per day after having a baby.
+Let mud = mu1 - mu0
+H0: mu1 = mu0 <=> H0: mud = 0
+H0: mud >= 0, H1: mud < 0 (hence, our alternative hypothesis H1 = mothers' sleeping hours have been significantly reduced after having a baby; while our null hypothesis H0 = mothers' sleeping hours have stayed the same or significantly increased after having a baby.)
+
+**Step 2: Find the testing statistic and its distribution.**
+From the data question, x_bard = 2.5 and sample standard deviation sd = 4, so
+T = (x_bard-mud)/sd/sqrt(n)
+```{r}
+mud <- 0
+sd <- 4
+n <- 25
+x_bar <- 2.5
+t <- (x_bar - mud)/(sd/sqrt(n))
+t
+```   
+
+Without proceeding to the next stage, we can tell that 3.125 is already slightly bigger than 2, so we're likely to reject H0.
+
+**Step 3: Find the critical value C at 5% significance level.**
+At the significance level a = 5%, and df = n-1 = 25-1 = 24, we find t0.95,24 = 1.710882.
+```{r}
+qt(0.95, 24)
+``` 
+
+**Step 4: Make the decision.**
+Since |T| = 3.125 > 1.71, we can reject H0 at 5% significance level, or 95% confidence level.
+
+**Step 5: p-value calculation**
+Below are 2 ways in whcih p-value can be calculated in this case. It is equal to 0.002301319.
+```{r}
+pt(q=t, df=24, lower.tail=FALSE)
+``` 
+
+```{r}
+pt(-abs(t),df=24)
+``` 
+
+# Question 2
+This question is about testing a proportion.
+
+**Step 1: Define 2 competing hypotheses.**
+Let p0 be the rate of severe symptoms caused by the flu season (in general population?), equal to 12%:
+```{r}
+p0 <- 0.12
+``` 
+
+Let p_hat be the rate of severe symptoms caused by the flu season among undergraduate students:
+```{r}
+p_hat <- 25/526
+``` 
+
+Hypothesis: H0: p>=p0, H1: p<p0, where p0 = 0.12.
+
+**Step 2: Find the testing statistic and its distribution.**
+Testing statistic:
+T = (p_hat - p0)/(sqrt(p0 x (1-p0)/n))
+  = (25/526 - 0.12)/(sqrt(0.12 x (1-0.12)/526)), t(df = 525)
+
+```{r}
+n <- 526
+T <- (p_hat - p0)/(sqrt(p0*(1-p0)/n))
+T
+``` 
+
+**Step 3: Find the critical value C at 0.01% significance level.**
+Critical value at 99.99% confidence level is t0.9999 = -3.745448 (calculated below)
+```{r}
+qt(1-0.9999, 525)
+``` 
+|T| > |t0.9999| as 5.114793 > 3.745448, hence we reject H0.
+Therefore, we can conclude that the drug is a success at 99.99% confidence interval.
+However, it is impossible to infer that the new anti-flu drug is effective for the general population, as the sample is restricted only to undergraduate students.
+
+# Question 3
+(a) This question is about assumptions of linear regression model.
+The equation makes it possible to show how an age group (independent/explanatory variable) affects a game app's revenue (dependent variable). The equation does not violate assumption 1, as it specifies a linear relationship between revenue and age, where each coefficient of B stands by itself, i.e. all components are linear. It seems to be no perfect collinearity, as none of the independent variables is redundant, hence, assumption 2 is not violated.Since the equation explores different user group's contribution, it is likely that we have a random sampling and the sample is from relatively homogeneous group (those interested in the game), satisfying assumptions 3 and 5. However, it is unclear whether the error term *E* is uncorrelated with independent variables, as there is no dataset given, hence we cannot be sure that assumption 4 holds. Therefore, the model is possible to estimate but is may be not the best linear unbiased estimator, according to Gauss-Markov theorem. The model only takes gamers' age as an independent variable, omitting others, like income, whether the account is shared or not (e.g. an 11-year-old could share their parent's account), years spent on the gaming platform, the achieved level at the game.
+
+(b) I disagree with student A. *b1* measures how much the revenue will change as the share of teenage users increases by 1 unit. Hence, when *x1*(number of teenage users) increases by 1 person, then predicted *Y*(revenue) goes up by *b1* value.
+
+(c) AGE1 = age1;
+AGE2 = age1 + age 2;
+AGE3 = age1 + age2 +age3.
+rev = 0.87 + 1.20AGE1 + 1.08AGE2 + 0.67AGE3 =
+0.87 + 1.20age1 + 1.08(age1+age2) + 0.67(age1+age2+age3) =
+0.87 + 1.20age1 + 1.08age1 + 1.08age2 + 0.67age1 + 0.67age2 + 0.67age3 =
+0.87 + 2.95age1 + 1.75age2 + 0.67age3.
+
+# Question 4
+This question is about quadratic functional form, capturing non-monotonic impact of house age on house price. According to our estimation, after living in the property for a year (i.e., when age increases by 1 unit), modern house price bought by "fam1" will depreciate by 11.79332 units(e.g., £000) given everything unchanged. For another family "fam2" who bought a 50-year old property, the house price will drop only by 7.201805 in a year.
+
+Comparing those 2 values, we can conclude that house value eventually increases over time, albeit depreciating first. Since b1 = I(age^2) = 0.0459152 > 0, the parabola's ends are upwards. It means, that the house price will be decreasing until turning point, and will be increasing again after the the curve's bottom point.
+```{r}
+price1_fam1 <- 1441.263
+price2_fam1 <- 1441.263 + 0.0459152*(1)**2 - 11.83924*1
+depreciation_fam1 <- price2_fam1 - price1_fam1
+depreciation_fam1
+
+price1_fam2 <- 1441.263 + 0.0459152*(50)**2 - 11.83924*50
+price2_fam2 <- 1441.263 + 0.0459152*(51)**2 - 11.83924*51
+depreciation_fam2 <- price2_fam2 - price1_fam2
+depreciation_fam2
+``` 
+
+```{r}
+# For fun as it makes no sense, age's units may be in decades, rather than years. Please ignore it if it's wrong.
+turning_point_prep <- -(-11.83924/2*0.0459152)
+turning_point_in_days <- 365/(1/turning_point_prep)
+turning_point_in_days
+turning_point_in_months <- turning_point_in_days/30
+turning_point_in_months
+``` 
+
+# Question 5
+a) *b_wave_1* = 95.14
+```{r}
+house <- read.csv(file="./houseprice.csv", header=T,sep=",")
+q5a <- lm(price ~ rooms, data=house)
+summary(q5a)
+``` 
+(b) *b_hat_1* = 1.03633,
+    *b_hat_2* = 0.23633.
+```{r}
+q5b <- lm(price ~ rooms+area, data=house)
+summary(q5b)
+``` 
+
+(c) *b_wave_1* = 95.14; *b_hat_1* = 1.0363
+(d) *Y* = 398.18
+```{r}
+q5d <- lm(area ~ rooms, data=house)
+summary(q5d)
+
+Y <- 398.18
+b_wave_1 <- 95.14
+b_hat_1 <- 1.0363
+b_hat_2 <- 0.23633
+b_wave_1_check = b_hat_1 + Y*b_hat_2
+b_wave_1_check
+b_wave_1
+round(b_wave_1_check, digits = 2) == b_wave_1
+``` 
+# Question 6
+```{r}
+ set.seed(1)
+  x1=runif(100)
+  x2=0.5*x1+rnorm(100)/10
+  y=2+2*x1+0.3*x2+rnorm(100)
+``` 
+The form of the linear model: **Y = 2 + 2X1 +0.3X2 + rnorm** or **Y = b0 + b1xX1 + b2*X2 + E**.
+The regression coefficients are: *b0*=2, *b1*=0.5, *b2*=0.3.
+The correlation is 0.84 (2 d.p.), which means that there is a strong positive correlation between *x1* and *x2*, which is also observable on the plot below.
+```{r}
+plot(x1, x2)
+``` 
+```{r}
+cor(x1, x2)
+``` 
+(b) Estimated *b_hat_0*=2.1305, original *b0*=2;
+    Estimated *b_hat_1*=1.4396, original *b1*=0.5;
+    Estimated *b_hat_2*=1.0097, original *b2*=0.3.
+    Hence, we can reject both null hypotheses H0: *b1*=0 and H0: *b2*=0.
+```{r}
+ set.seed(1)
+  x1=runif(100)
+  x2=0.5*x1+rnorm(100)/10
+  y=2+2*x1+0.3*x2+rnorm(100)
+  
+  q6b <- lm(y ~ x1+x2)
+  summary(q6b)
+``` 
+(c) *b_hat_1* = 1.9759
+    Hence, we can reject the null hypothesis H0: *b1*=0.
+```{r}
+ set.seed(1)
+  x1=runif(100)
+  x2=0.5*x1+rnorm(100)/10
+  y=2+2*x1+0.3*x2+rnorm(100)
+  
+  q6c <- lm(y ~ x1)
+  summary(q6c)
+``` 
+(d) *b_hat_2* = 2.8996
+    Hence, we can reject the null hypothesis H0: *b2*=0.
+```{r}
+ set.seed(1)
+  x1=runif(100)
+  x2=0.5*x1+rnorm(100)/10
+  y=2+2*x1+0.3*x2+rnorm(100)
+  
+  q6d <- lm(y ~ x2)
+  summary(q6d)
+``` 
+(e) Results in hypothesis testings obtained in (b)-(d) do not contradict each other.
+(f) Estimated *b_hat_0=*2.02039, original *b0*=2;
+    Estimated *b_hat_1*=1.99053, original *b1*=0.5;
+    Estimated *b_hat_2*=0.31715, original *b2*=0.3.
+    Hence, we can reject both null hypotheses H0: *b1*=0 and H0: *b2*=0.
+    
+Model in (b) is more accurate than model (f), as coefficients are way closer to the original (true) ones.
+```{r}
+ set.seed(1)
+  x1=runif(10000)
+  x2=0.5*x1+rnorm(10000)/10
+  y=2+2*x1+0.3*x2+rnorm(10000)
+  
+  q6f <- lm(y ~ x1+x2)
+  summary(q6f)
+``` 
+
+# Question 7
+
+(a) Keeping everything else unchanged, if the area's ratio of the minority ethnicity population increases by 1, fast-food restaurants charge 0.06493units (e.g.,0.0£) higher price on soda.
+Based on the regression result, we can conclude that there is price discrimination against minorities.
+```{r}
+soda <- read.csv(file="./sodaprice.csv", header=T,sep=",")
+q7a <- lm(psoda ~ prpminor, data=soda)
+summary(q7a)
+``` 
+
+(b) The discrimination effect becomes smaller when income is controlled: the average price of soda increases by 1.603e-06 while the minority ethnicity population increases by 1 (estimated coefficient is > 0).
+```{r}
+q7b <- lm(psoda ~ prpminor+income, data=soda)
+summary(q7b)
+``` 
+
+(c) We do not want to take logarithm on *prpminor*, as it is a ratio, and taking its logarithm may skew the data.
+```{r}
+q7c <- lm(psoda ~ prpminor+log(income) + prppov + log(house), data=soda)
+summary(q7c)
+
+p_change_psoda <- 0.2*0.10066*100
+cat("If *prpminor* increases by 0.2, the estimated percentage change in psoda is ", p_change_psoda)
+``` 
+
+(d) *f*=3.504284,
+    *qf*=3.01851.
+Because *f>qf*, we reject the null hypothesis at 5% level: *ln(income)* and *prppov* are jointly significant, i.e. logarithm on median family income and proportion of population in poverty have joint impact on average soda price per unit. The restricted model has weaker explanatory power than the unrestricted model, as SSRr > SSRur, and we have a larger F statistic.
+```{r}
+#Step 1: fit restricted and unrestricted models
+q7d_ur <- lm(psoda ~ prpminor+log(income)+prppov+log(house), data=soda)
+q7d_r <- lm(psoda ~ prpminor + log(house), data=soda)
+#Step 2: compute SSR
+ssr_ur <- sum(q7d_ur$residuals**2)
+cat("SSR of the unrestricted model is ", ssr_ur)
+cat("\n")
+ssr_r <- sum(q7d_r$residuals**2)
+cat("SSR of the restricted model is ", ssr_r)
+cat("\n")
+#Step 3: compute F statistics
+f <- ((ssr_r-ssr_ur)/2)/(ssr_ur/(401-4-1))
+cat("F statistic is ", f)
+cat("\n")
+#Step 4: find critical value
+cat("Critical value is ", qf(0.95, 2, 396))
+``` 
+
+# Question 8
+
+(a) Keeping everything else unchanged, when education expenditure increases by 1% per pupil in the district, the math scores increase by 0.35 units (as expenditure is taken in a logarithm form). The result is very statistically significant,as p-value is <2e-16. Hence, education expenditure has a significant impact on math scores.
+```{r}
+school <- read.csv(file="./schoolscores.csv", header=T,sep=",")
+#Step 1: estimate OLS regression ignoring the panel data structure.
+q8a <- lm(math4 ~ lrexpp + lenrol+ lunch, data=school)
+summary(q8a)
+``` 
+
+(b) Coefficients on *lxepp* and *lunch* in part (b) are smaller than in part (a), with an exclusion of *lenrol*.
+```{r}
+#Step 2: Introduce panel data regression without all coefficients listed, with year fixed effects.
+library(plm)
+q8b <- plm(math4 ~ lrexpp + lenrol+ lunch, data=school, model="within", index=c("year"))
+summary(q8b)
+``` 
+
+(c) Part (b) is more reliable in evaluating the impact of education expenditure on math scores, as it has a smaller std deviation than part (c). In part (c), the new coefficient 68.145429 suggests that when education expenditure increases by 1%, math scores increase by 0.68 units, i.e. by 0.68% of fourth graders who pass a standardized math test.
+```{r}
+#Step 3: Introduce panel data regression without all coefficients listed, with year fixed effects and district fixed effects.
+library(plm)
+q8c <- plm(math4 ~ lrexpp + lenrol+ lunch, data=school, model="within", index=c("distid", "year"))
+summary(q8c)
+``` 

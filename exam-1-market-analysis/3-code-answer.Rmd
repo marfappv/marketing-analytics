@@ -1,0 +1,214 @@
+---
+title: "MSIN0094 First Assignment"
+author: "Due 10 am, 29 Oct"
+output: 
+  pdf_document:
+    number_sections: true
+fontsize: 11pt
+geometry: margin=1.25in
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = T)
+pacman::p_load(data.table, knitr)
+```
+
+Word count: 1500
+
+# Market Analysis 
+
+1. What factors are typically considered by marketing managers in the *market analysis*, i.e., the first step of a marketing process? (**5 pts**) 
+
+Company, customer, collaborators, context, competitors.
+
+
+
+2. Briefly discuss each factor in the context of the new Bubble Tea business except "competitor". (2 pts for each factor, **8 pts** in total; please properly reference any external sources if any.)
+
+Company: The most intuitive business model for a coffee shop would be a franchise. However, taking into consideration the subscription model released by Pret in summer 2020 which is proven to be very popular among UCL business students in Canary Wharf area, Tom might consider the similar subscription model, which would be especially attractive for foodies (e.g. £30 per month with unlimited drinks every 3 hours)
+Organisational mission is to make the fruitiest bubble tea in the area as fruit flavour was the most trending flavour in 2020 and the demand for it is estimated to keep rising even more till 2027, according to Allied Market Research.
+
+Customers (B2C): Canary Wharf commuters  and residents; nationals within the Asian region are more likely to be loyal (or habitual customers); least price sensitive ages in the area (important as bubble tea is somewhat a luxury rather than a necessity): 20-50 - young adults and middle-aged people. There is a mix of both external threat and opportunity regarding consumers, as there is “rising number of fitness conscious consumers” along with “rising demand for tea based beverages in youth generation” as a substitute to caffeine. (Allied Market Research, 2020)
+
+Collaborators: co-branding arrangements regarding distribution channels can be made -  we can partner with Deliveroo for economies of scope to not worry about logistics.
+To increase the economies of scale (make average costs decrease while production output increases), we may order tapioca pearls in bulk from suppliers and only specialise on fruity bubbles. Overall, these actions can make Tom’s shop’s efficiency higher.
+
+Context: income levels are higher than average in the area due to Fortune 500 and banking companies’ headquarters based there. Since the cost of production of bubble tea is high, high prices are anticipated - especially, straight after launching the business - the location should be a great fit from an economic standpoint. However, other determinants of bubble tea places’ success and failure in the London area should be considered, for example, megatrends towards sustainability must be reflected on bubble-tea cups, straws, film over the top, reusable or biodegradable bags/containers for deliveries.
+
+
+3. Please read Page 4, LBS Case 520-0109-5, and analyze the competitors for the new bubble tea business nearby One Canada Square. (**4 pts**)
+    - tips: you should discuss the direct/indirect/potential/non competitors for the new bubble tea shop
+    
+Below, MO = market overlap; RE = resource equivalence
+Direct (high MO, high RE): YiFang, T4, Lucky Tea, Chatime.
+Indirect (high MO, low RE): ice teas - Lippton, sweet coffees - Starbucks, smoothies, milkshakes, lemonades - Pret subscription model very popular among UCL students.
+Potential (low MO, high RE): sugar substitutes, glucose-based organic drinks, Tian Tian Oriental Supermarket.
+Non-competitor (low MO, low RE): unrelated businesses in industries other than food & beverage.
+
+
+4. Compute the average customer acquisition costs for random blanket mailing. (**4pts**)
+    - Additional tips: do not directly use the raw numbers in the intermediate steps, but use variables to represent the values, as what we did in lecture slides. 
+    
+```{r echo=TRUE}
+## complete the code below
+
+cost_each_offer_blanket <- 0.8+0.4
+response_rate_blanket <- 0.012
+  
+CAC_blanket <-cost_each_offer_blanket / response_rate_blanket
+
+print(paste0("Customer Acquisition Costs for blanket mailing is £",CAC_blanket) ) 
+```   
+    
+    
+5. Compute the average customer acquisition costs for targeted mailing if Tom buys the list from the list broker. (**4pts**)
+
+```{r echo=TRUE}
+## complete the code below
+cost_each_offer_targeted <- 1+cost_each_offer_blanket
+response_rate_targeted <- 0.025
+  
+CAC_targeted <- cost_each_offer_targeted / response_rate_targeted
+
+print(paste0("Customer Acquisition Costs for targeted mailing is £",CAC_targeted) ) 
+```
+
+
+6. Discuss the pros and cons of each acquisition method. (**6pts**; open question; your marks will depend on the quality of your discussion).
+    - Tips: Nothing is perfect; target marketing may also have its disadvantages. Think carefully about the potential limitations of target marketing if Tom decides to buy the name lists from list brokers. You can refer to online resources if necessary.
+
+Random blanket mailing:
++ since it is a random sample, it will be more representative of the neighbourhood’s demand for bubble tea, without excluding those not on the broker’s list or misclassified
++ cheaper cost of marketing
++ less time-consuming
+- bigger sunk costs are anticipated, as the response rate is lower
+
+Targeted mailing:
++ fits marketing orientation approach to later target the right customer segments specific wants and needs of potential customers
+- more expensive
+- more time-consuming
+- cannot rely on the list’s accuracy and whether it’s updated
+
+    
+7. Discuss which acquisition method Tom should choose (**6pts**).
+    - Tips: Please take into account the pros and cons of each acquisition method in your discussion.
+
+Tom should choose targeted mailing as in the long-term, it will serve him better to solve his main problem - not having existing data on local residents’ preference for bubble tea. In terms of Tom’s priorities, the stable nature of income would be more appreciated in the long-term rather than its time sensitivity (due to mental unease from paused Squid Game), so the con of the method regarding higher time-consumption and higher cost can be omitted, as these only affect in short-term.
+
+#Customer Lifetime Value
+
+8. Write a user defined function to compute CLV (2 pts each for correct `M`, `profit`, `profit_after_retention`, `profit_after_retention_discount`, and `CLV`; **10pts** in total). The notations are as follows:
+      - `N`: number of periods
+      - `COGS`: cost of goods sold
+      - `M`: profit each period from selling products
+      - `c`: variable marketing costs each period
+      - `g`: profit each period net of marketing costs
+      - `profit`: profit sequence for all periods
+      - `r`: retention rate
+      - `profit_after_retention`: profit sequence after applying retention rate
+      - `d`: discount factor
+      - `profit_after_retention_discount`: profit sequence after applying retention rate and discount factor
+      
+```{r}
+compute_CLV <- function(N,r,d,COGS,revenue_each_period, c) {
+
+  # fill in how to compute M: profit each period from selling products
+  M <- revenue_each_period * (1 - COGS)
+  
+  # fill in how to compute g:profit each period net of marketing costs
+  g <- M - c
+  
+  # fill in how to create profit sequence for each period
+  profit <- rep(g, N)
+    
+  # fill in how to apply retention rate: profit sequence after applying retention rate
+  profit_after_retention <- (r^(seq(1, N)-1)) * profit
+  
+  # fill in how to apply discount rate
+  profit_after_retention_discount <- profit_after_retention * (1/ (1 + d)) ^ seq(1, N)
+  
+  # fill in how to compute CLV
+CLV <- sum(profit_after_retention_discount)
+    
+  return(CLV)
+}
+```
+
+9. Use the `compute_CLV` function to compute the CLV for foodie customers (**4pts**).  Discuss whether foodie customers are profitable to acquire (**4pts**).
+
+Since CLV for foodies is £417.32 and CAC from chosen acquisition method is £88, net CLV is £329.32 per foodie. Hence, they are profitable to acquire.
+
+```{r}
+# use the function to compute the CLV for foodie customers
+compute_CLV(24, 0.95, 0.1/12, 0.6, 10*8, 0)
+```
+
+10. Use the `compute_CLV` function to compute the CLV for non-foodie customers (**4pts**). Discuss whether non-foodie customers are profitable to acquire (**4pts**). 
+
+Since CLV for foodies is £85.40 and CAC from chosen acquisition method is £88, net CLV is £(-2.60) per foodie. Hence, they are not profitable to acquire, as overall, each acquired non-foodie on a loyalty program will result in £2.60 loss.
+
+```{r}
+# use the function to compute the CLV for non-foodie customers
+compute_CLV(24,0.85,0.1/12,0.45, 5*5, 0)
+```
+
+11. How much marketing cost at most should Tom invest in converting a non-foodie customer into a foodie customer (**2pts**)?
+```{r}
+417.321 - 85.40236
+```
+
+
+12. Design in detail an appropriate experiment proposal for Tom. (**15 pts**; the final marks will depend on the quality of your proposal)
+    - Tips: Please follow the steps to run an experiment in Week 3.
+    
+Tom has to quantify scientifically what is the impact of the loyalty programme using RCT to collect primary data. It is better to do a field experiment, as internal validity is low, and external validity is high because we will use the real-life true behaviours of potential customers. There is just 1 dimension with 2 conditions being measured: loyalty  program based on pricing deduction and customers’ retention rate, so A/B testing should be executed.
+
+First, Tom should use meso-level rather than micro-level as a unit of randomisation. One isolated community of both foodies and non-foodies in the Canary Wharf area is given a loyalty card (treatment group) and the other one has no interventions in their purchasing decisions (controlled group). In that way, main disadvantages of granularity at micro-level are avoided, such as higher costs of the experiment, its higher complexity of logistics, spillovers and crossovers - making sure that SUTVA holds. Other advantages of the level of granularity is that it reduces the chance that the unobserved factors matter and the chance that there might be a systematic error/unbalance of covariances. 
+
+Secondly, Tom needs to ensure that no spillover and crossover effects occur. One way to exclude interference between each customer's group is to display loyalty programs in Deliveroo. Tom should randomise the Deliveroo orders only based on browser cookies, and make sure that the same cookie receives the same treatment. In this case, randomisation is true. 
+
+Thirdly, Tom should use stratified randomisation to get the same percentage of different types of customers per sample as the whole population (meaning, Canary Wharf area and around 0.6 miles radius from it - 10 minutes of moderate walk). Although, he should be aware that the results cannot be generalised for the whole population as only those who have slightly higher income use Deliveroo instead of walk-in. The percentages can be determined by the number of students and full-time employees in the area, their average age, regions of their nationalities, etc.
+
+Then, Tom needs to ensure that appropriate data are collected. In order to measure the incremental impact of the program on customers’ retention rate, we need to know the difference in total purchases with and without the loyalty program over the same period of time. Tom should aim to collect at least 30-50 observations for statistical significance to be achieved. Although, it depends on the budget. Additionally, recruitment practice should be the same and randomised. We need to collect customers' purchase data and link the purchase data with their treatment assignment. For online customers, we can directly link the treatment with purchase behaviors. If the bubble tea is collected in-store, we can match the group's purchase behaviors using customer identifiers like Deliveroo ID or order reference number. If the person has a Deliveroo ID, but is not matching to any of the ID’s treated with a loyalty program, we just assign them to a controlled group instead. 
+Although it is impossible to do direct placebo testing in this case, where one marketing option/product is real and another one is a fake of the given treatment, we can try doing the similar. Both groups will get one of the messages below but only one of the groups will actually get the discounts along the month. The messages are phrased differently but numerically, end up in the same cost to the business and the same compensation for the customer:
+“Get up to £8 back per month as a loyal customer!”
+“Every 10th drink is on us. Join our loyalty program.”
+This method might remove many of confounding factors, like the differences in behaviours **knowing** that you will get a discount and **hoping** or **double-guessing** if you will get one.
+
+After collecting the data, Tom can interpret results from the experiment in 2 steps, starting with a randomisation check, where he simply compares characteristics between the 2 groups. There is only one data type that we can be sure of - longitudinal data - as both of our groups will be commuting and/or living in the Canary Wharf area. Ideally, there should be neither explicit differences, nor striking similarities. Finally, Tom should analyze the data and estimate the ATE by running a t-test or regression analysis.
+    
+
+13. Should Tom go ahead with the loyalty program for foodie customers? Show detailed computation steps to support your conclusion. (5pts for correct codes; 5pts for correct discussion; **10 pts** in total)
+    - tips: treat the £4 off as the variable marketing costs in each period, so `c` is no longer 0.
+
+The difference between CLVs for foodies with and without loyalty program is £73.52. Since the difference is quite considerable, Tom should not go ahead with the program for foodies, as per each foodie, Tom’s going to get the whole £73 less as he should have without the program (although not suffering from economic loss). However, it still cannot be said for sure, as it is uncertain of how randomized the A/B testing was.
+
+```{r}
+CLV_foodie_without_loyalty <- compute_CLV(24,0.95,0.1/12,0.6, 10*8, 0)
+
+CLV_foodie_without_loyalty
+
+CLV_foodie_with_loyalty <- compute_CLV(24, 0.96, 0.1/12, 0.6, 10*8, 2*4)
+
+CLV_foodie_with_loyalty
+
+```
+
+
+14. Should Tom go ahead with the loyalty program for non-foodie customers? Show detailed computation steps to support your conclusion. (5pts for correct codes; 5pts for correct discussion; **10 pts** in total)
+    - tips: treat the £4 off as the variable marketing costs in each period, so `c` is no longer 0.
+
+The difference between CLVs for non-foodies with and without loyalty program is £1.28. Since the difference is not that big, Tom should go ahead with the program for non-foodies, especially considering the fact that the program may convert non-foodies into foodies. However, since “customers do not change their shopping frequency or shopping basket, and only use the discount to top up more ingredients in the drinks”, it might not be the case.
+
+```{r}
+CLV_nonfoodie_without_loyalty <- compute_CLV(24,0.85,0.1/12,0.45, 5*5, 0)
+
+CLV_nonfoodie_without_loyalty
+
+CLV_nonfoodie_with_loyalty <- compute_CLV(24, 0.90, 0.1/12, 0.45, 5*5, 4)
+
+CLV_nonfoodie_with_loyalty
+
+```
+References:
+Allied Market Research, 2020. Bubble Tea Market Size, Share and Trends. [Online] Available at: https://www.alliedmarketresearch.com/bubble-tea-market. [Accessed 29 October 2021].
